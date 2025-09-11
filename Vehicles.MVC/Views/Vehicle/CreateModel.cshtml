@@ -1,0 +1,43 @@
+﻿@model Vehicles.Models.VehicleModelDTO
+
+@{
+    ViewData["Title"] = "CreateModel";
+}
+
+<h1>Create new model</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateModel">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MakeId" class="control-label"></label>
+                <select asp-for="MakeId" asp-items="ViewBag.MakeList" class="form-control"></select>
+                <span asp-validation-for="MakeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Abrv" class="control-label"></label>
+                <input asp-for="Abrv" class="form-control" />
+                <span asp-validation-for="Abrv" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

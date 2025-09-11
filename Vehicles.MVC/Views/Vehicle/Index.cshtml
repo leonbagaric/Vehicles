@@ -1,0 +1,200 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Vehicles.Models.IndexHelper
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Admin");
+    ViewData["Title"] = "Vehicles";
+}
+
+<center><h1>Your Vehicles</h1></center>
+<br />
+<br />
+
+<div class="row">
+    @if (isAdmin)
+    {
+
+        <div class="col-md-5">
+            <h2>Makes</h2>
+            <form method="get" class="d-flex align-items-start gap-0 mb-2">
+                <a asp-action="CreateMake" class="btn">Add New Make</a>
+                <input type="text" name="filterMakes" value="@Model.FilterMakes" placeholder="Filter makes..." class="form-control" style="width:200px;" />
+                <button type="submit" class="btn">Filter</button>
+            </form>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <a asp-action="Index" asp-route-sortMakes="name" asp-route-sortModels="@Model.SortModels" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterModels">Name</a>
+                            <a asp-action="Index" asp-route-sortMakes="name_descending" asp-route-sortModels="@Model.SortModels" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterModels">▼</a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-sortMakes="abrv" asp-route-sortModels="@Model.SortModels" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterMakes">Abbreviation</a>
+                            <a asp-action="Index" asp-route-sortMakes="abrv_descending" asp-route-sortModels="@Model.SortModels" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterMakes">▼</a>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var make in Model.Makes)
+                    {
+                        <tr>
+                            <td>@make.Name</td>
+                            <td>@make.Abrv</td>
+                            <td>
+                                <a asp-action="EditMake" asp-route-id="@make.Id">Edit</a> <br />
+                                <a asp-action="MakeDetails" asp-route-id="@make.Id">Details</a> <br />
+                                <a asp-action="DeleteMake" asp-route-id="@make.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div>
+                @if (Model.PageMakes > 1)
+                {
+                    <a asp-action="Index" asp-route-pageMakes="@(Model.PageMakes - 1)" asp-route-pageModels="@(Model.PageModels )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="@Model.SortModels" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterMakes">Previous</a>
+                }
+                <span> Page @Model.PageMakes </span>
+                @if (Model.HasNextPageMakes)
+                {
+                    <a asp-action="Index" asp-route-pageMakes="@(Model.PageMakes + 1)" asp-route-pageModels="@(Model.PageModels )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="@Model.SortModels" asp-route-filterModels="@Model.FilterModels" asp-route-filterMakes="@Model.FilterMakes">Next</a>
+                }
+            </div>
+        </div>
+
+
+        <div class="col-md-7">
+            <h2>Models</h2>
+            <form method="get" class="d-flex align-items-start gap-2 mb-2">
+                <a asp-action="CreateModel" class="btn">Add New Model</a>
+                <input type="text" name="filterModels" value="@Model.FilterModels" placeholder="Filter models..." class="form-control" style="width:200px;" />
+                <select asp-for="MakeId"
+                        asp-items="@(new SelectList(Model.Makes, "Id", "Name", Model.MakeId))"
+                        class="form-control" style="width:150px;">
+                    <option value="">No Filter</option>
+                </select>
+                <button type="submit" class="btn">Filter</button>
+            </form>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <a asp-action="Index" asp-route-sortModels="name" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">Name</a>
+                            <a asp-action="Index" asp-route-sortModels="name_descending" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">▼</a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-sortModels="makeName" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">Make</a>
+                            <a asp-action="Index" asp-route-sortModels="makeName_descending" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">▼</a>
+
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-sortModels="modelName" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">Model</a>
+                            <a asp-action="Index" asp-route-sortModels="modelName_descending" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">▼</a>
+
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-sortModels="makeAbrv" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">Make Abrv.</a>
+                            <a asp-action="Index" asp-route-sortModels="makeAbrv_descending" asp-route-sortMakes="@Model.SortMakes" asp-route-filterMakes="@Model.FilterMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterModels="@Model.FilterModels">▼</a>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Models)
+                    {
+                        <tr>
+                            <td>@item.FullName</td>
+                            <td>@item.Name</td>
+                            <td>@item.MakeName</td>
+                            <td>@item.MakeAbrv</td>
+                            <td>
+                                <a asp-action="EditModel" asp-route-id="@item.Id">Edit</a><br />
+                                <a asp-action="ModelDetails" asp-route-id="@item.Id">Details</a><br />
+                                <a asp-action="DeleteModel" asp-route-id="@item.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div>
+                @if (Model.PageModels > 1)
+                {
+                    <a asp-action="Index" asp-route-pageModels="@(Model.PageModels - 1)" asp-route-sortModels="@Model.SortModels" asp-route-sortMakes="@Model.SortMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Previous</a>
+                }
+                <span> Page @Model.PageModels </span>
+                @if (Model.HasNextPageModels)
+                {
+                    <a asp-action="Index" asp-route-pageModels="@(Model.PageModels + 1)" asp-route-sortModels="@Model.SortModels" asp-route-sortMakes="@Model.SortMakes" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Next</a>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12">
+            <h2>Models</h2>
+
+            <form method="get" class="d-flex align-items-start gap-2 mb-2">
+                <input type="text" name="filterModels" value="@Model.FilterModels" placeholder="Filter models..." class="form-control" style="width:200px;" />
+                <button type="submit" class="btn">Filter</button>
+            </form>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="name" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Full Name</a> /
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="name_descending" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">desc.</a>
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="makeName" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Make Name</a> /
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="makeName_descending" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">desc.</a>
+
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="modelName" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Model Name</a> /
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="modelName_descending" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">desc.</a>
+
+                        </th>
+                        <th>
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="abrv" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Model Abbreviation</a> /
+                            <a asp-action="Index" asp-route-pageModels="@(Model.PageModels )" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="abrv_descending" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">desc.</a>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Models)
+                    {
+                        <tr>
+                            <td>@item.FullName</td>
+                            <td>@item.MakeName</td>
+                            <td>@item.Name</td>
+                            <td>@item.Abrv</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div>
+                @if (Model.PageModels > 1)
+                {
+                    <a asp-action="Index" asp-route-pageModels="@(Model.PageModels - 1)" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="@Model.SortModels" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Previous</a>
+                }
+                <span> Page @Model.PageModels </span>
+                @if (Model.HasNextPageModels)
+                {
+                    <a asp-action="Index" asp-route-pageModels="@(Model.PageModels + 1)" asp-route-pageMakes="@(Model.PageMakes )" asp-route-sortMakes="@Model.SortMakes" asp-route-sortModels="@Model.SortModels" asp-route-filterMakes="@Model.FilterMakes" asp-route-filterModels="@Model.FilterModels">Next</a>
+                }
+            </div>
+        </div>
+    }
+</div>
